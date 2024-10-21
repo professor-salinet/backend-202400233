@@ -1,46 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Adivinhação</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        input {
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #resultado {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
-</head>
 <body>
     <h1>Jogo de Adivinhação</h1>
     <p>Tente adivinhar o número secreto entre 1 e 50:</p>
-    <form>
-        <input type="number" name="palpite" placeholder="Digite seu palpite" min="1" max="50" required>
+    <form id="guessForm">
+        <input type="number" name="palpite" id="palpite" placeholder="Digite seu palpite" min="1" max="50" required>
         <br><br>
         <button type="submit">Enviar Palpite</button>
     </form>
 
-<p>Número aleatório: <!--%= numeroAleatorio %--></p>
+    <p id="resultado"></p>
 
+    <script>
+        // Gera um número aleatório entre 1 e 50
+        var numeroAleatorio = sessionStorage.getItem("numeroAleatorio");
+        if (numeroAleatorio == null) {
+            numeroAleatorio = Math.floor(Math.random() * 50) + 1; // Gera número de 1 a 50
+            sessionStorage.setItem("numeroAleatorio", numeroAleatorio);
+        } else {
+            numeroAleatorio = parseInt(numeroAleatorio);
+        }
+
+        var tentativas = 0;
+
+        document.getElementById("guessForm").onsubmit = function(event) {
+            event.preventDefault(); // Previne o comportamento padrão do formulário
+            var palpite = parseInt(document.getElementById("palpite").value);
+            tentativas++;
+
+            var resultado = document.getElementById("resultado");
+
+            if (palpite > numeroAleatorio) {
+                resultado.innerHTML = "O número aleatório é menor que: " + palpite;
+            } else if (palpite < numeroAleatorio) {
+                resultado.innerHTML = "O número aleatório é maior que: " + palpite;
+            } else {
+                resultado.innerHTML = "Você acertou! O número era " + numeroAleatorio + ".<br>O número de tentativas foi: " + tentativas;
+                sessionStorage.removeItem("numeroAleatorio"); // Reseta o jogo
+            }
+        };
+    </script>
 </body>
-</html>
